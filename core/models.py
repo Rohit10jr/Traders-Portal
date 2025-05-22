@@ -8,6 +8,7 @@ class Company(models.Model):
     scripcode = models.CharField(max_length=50)
 
     def __str__(self):
+        # return f"{self.id}"
         return f"{self.symbol} - {self.company_name}"
         # return super().__str__()
 

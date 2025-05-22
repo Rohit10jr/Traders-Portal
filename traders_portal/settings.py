@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'core',
 
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -149,8 +150,66 @@ from datetime import timedelta
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Access token valid for 15 minutes
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300),  # Access token valid for 15 minutes
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token valid for 7 days
     # 'ROTATE_REFRESH_TOKENS': True,                   # Get a new refresh token on refresh
     'BLACKLIST_AFTER_ROTATION': True,                # Old refresh token becomes invalid after rotation
+}
+
+
+import os
+# LOGGING_DIR = os.path.join(BASE_DIR, 'logs')  # Create a folder named "logs"
+BASE_DIR = Path(__file__).resolve().parent.parent
+LOGGING_DIR = BASE_DIR / 'logs'
+LOGGING_DIR.mkdir(parents=True, exist_ok=True)
+# if not os.path.exists(LOGGING_DIR):
+    # os.makedirs(LOGGING_DIR)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'standard': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+        'detailed': {
+            'format': '[{asctime}] {levelname} {name} [{filename}:{lineno}]: {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': str(LOGGING_DIR / 'project.log'),
+            'formatter': 'standard',
+            'level': 'INFO',
+        },
+        'critical_file': {
+            'class': 'logging.FileHandler',
+            'filename': str(LOGGING_DIR / 'critical_api.log'),
+            'formatter': 'detailed',
+            'level': 'INFO',
+        },
+    },
+
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+
+    'loggers': {
+        'critical_api': {
+            'handlers': ['critical_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 }
