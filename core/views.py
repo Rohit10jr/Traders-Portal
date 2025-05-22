@@ -158,6 +158,7 @@ class WatchlistListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return WatchList.objects.filter(user=self.request.user)
     
+    # using direct approach
     # def perform_create(self, serializer):
     #     company_id = self.request.data.get('company_id')
     #     if WatchList.objects.filter(user=self.request.user, company_id=company_id).exists():
@@ -167,14 +168,16 @@ class WatchlistListCreateView(generics.ListCreateAPIView):
         # serializer.save(user=self.request.user, company=Company.objects.get(pk=company_id))
 
 
+    # using serializer field
     def perform_create(self, serializer):
         company = serializer.validated_data['company_id']
+        print("company", company)
         if WatchList.objects.filter(user=self.request.user, company=company).exists():
             raise ValidationError("Already in watchlist.")
-        serializer.save(user=self.request.user)
         # serializer.save(user=self.request.user, company=company)
+        serializer.save(user=self.request.user, company_id=company.id)
 
-    
+   
     # def perform_create(self, serializer):
     #     user = self.request.user
     #     company_id = self.request.data.get('company_id')
@@ -207,11 +210,9 @@ class WatchlistListDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return WatchList.objects.filter(user=self.request.user)
         # return super().get_queryset()
-
+    
     def perform_update(self, serializer):
-        company = serializer.validated_data.get('company_id')
-
-        if WatchList.objects.filter(user=self.request.user, company=company).exclude(pk=self.get_object().pk).exists():
-            raise ValidationError("Company is already in your watchlist.")
-
+        company = serializer.validated_data['company_id']
+        if WatchList.objects.filter(user=self.request.user, company=company).exclude(id=self.get_object().id).exists():
+            raise ValidationError("Already in watchlist.")
         serializer.save(user=self.request.user, company=company)

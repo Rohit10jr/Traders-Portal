@@ -149,7 +149,7 @@ from datetime import timedelta
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Access token valid for 15 minutes
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300),  # Access token valid for 15 minutes
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token valid for 7 days
     # 'ROTATE_REFRESH_TOKENS': True,                   # Get a new refresh token on refresh
     'BLACKLIST_AFTER_ROTATION': True,                # Old refresh token becomes invalid after rotation

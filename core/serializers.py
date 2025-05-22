@@ -36,3 +36,4 @@ class WatchlistSerializer(serializers.ModelSerializer):
         model = WatchList
         # fields = ['id', 'company', 'user']
         fields = ['id', 'company', 'company_id', 'user']
+        # extra_kwargs = {'id': {'read_only': True}}
