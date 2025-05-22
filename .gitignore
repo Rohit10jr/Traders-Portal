@@ -9,7 +9,6 @@ python_scripts.py
 .coverage
 .coverage.* 
 
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
@@ -18,11 +17,6 @@ __pycache__/
 *.egg
 *.egg-info/
 .eggs/
-
-# C extensions
-*.so
-*.dll
-*.dylib
 
 # Distribution / packaging
 .Python
