@@ -1,2 +1,74 @@
 venv/
 python_scripts.py
+
+
+# Pytest and coverage
+.pytest_cache/
+.coverage
+.coverage.* 
+htmlcov/ 
+logs/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg
+*.egg-info/
+.eggs/
+
+# C extensions
+*.so
+*.dll
+*.dylib
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.whl
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# IDEs and editors
+.idea/                  # PyCharm
+.vscode/                # VS Code
+*.sublime-project
+*.sublime-workspace
+.project
+.DS_Store               # macOS
+
+# Pytest and coverage
+.pytest_cache/          # pytest cache directory
+.coverage               # coverage.py data file
+htmlcov/                # HTML coverage reports
+.coverage.* # Other coverage data files
+
+# Database files
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.flaskenv
+
+# Logs and temporary files
+*.logs
+*.tmp
+
+# Jupyter Notebook files (if applicable)
+.ipynb_checkpoints/
