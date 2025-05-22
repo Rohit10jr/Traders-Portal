@@ -14,11 +14,12 @@ from .serializers import CompanySerializer, WatchlistSerializer
 
 from rest_framework.exceptions import ValidationError
 import logging
-logger = logging.getLogger(__name__)
 from django.db import IntegrityError
 from rest_framework import generics, permissions, status
 from django.shortcuts import get_object_or_404 # Helper for getting company
 
+critical_logger = logging.getLogger('critical_api')
+logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     def post(self, request):
@@ -84,43 +85,23 @@ class WatchlistListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return WatchList.objects.filter(user=self.request.user)
 
-
     # using serializer field
     def perform_create(self, serializer):
-        company = serializer.validated_data['company_id']
-        print("company", company)
-        if WatchList.objects.filter(user=self.request.user, company=company).exists():
-            raise ValidationError("Already in watchlist.")
-        serializer.save(user=self.request.user, company_id=company.id)
-        # serializer.save(user=self.request.user, company=company)
-        # above is equivalent to this
-        # serializer.save(user=self.request.user, company=Company.objects.get(pk=company_id))
+        try:
+            company = serializer.validated_data['company_id']
+            if WatchList.objects.filter(user=self.request.user, company=company).exists():
+                raise ValidationError("Already in watchlist.")
+            serializer.save(user=self.request.user, company_id=company.id)
+            # serializer.save(user=self.request.user, company=company)
+            # above is equivalent to this
+            # serializer.save(user=self.request.user, company=Company.objects.get(pk=company_id))
+        except KeyError:
+            logger.warning("Missing company_id in request")
+            raise ValidationError("Missing required field: company_id")
+        except Exception as e:
+            logger.error(f"Unexpected error during watchlist creation: {str(e)}")
+            raise ValidationError("Something went wrong. Try again later.")
 
-   
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     company_id = self.request.data.get('company_id')
-
-    #     if not company_id:
-    #         raise ValidationError({"company_id": "This field is required."})
-
-    #     try:
-    #         company = Company.objects.get(id=company_id)
-    #     except Company.DoesNotExist:
-    #         raise ValidationError({"company_id": "Company with this ID does not exist."})
-        
-    #     # company = get_object_or_404(Company, id=company_id)
-        
-    #     # runs before the database operation
-    #     if WatchList.objects.filter(user=user, company=company).exists():
-    #         raise ValidationError({"non_field_errors": ["This company is already in your watchlist."]})
-
-    #     # Database-level Fallback
-    #     try:
-    #         # watchlist_item, created = WatchList.objects.get_or_create(user=self.request.user, company=company)
-    #         serializer.save(user=user, company=company)
-    #     except IntegrityError:
-    #          raise ValidationError({"non_field_errors": ["This company is already in your watchlist (IntegrityError)."]})
 
 
 class WatchlistListDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -132,7 +113,65 @@ class WatchlistListDetailView(generics.RetrieveUpdateDestroyAPIView):
         # return super().get_queryset()
     
     def perform_update(self, serializer):
-        company = serializer.validated_data['company_id']
-        if WatchList.objects.filter(user=self.request.user, company=company).exclude(id=self.get_object().id).exists():
-            raise ValidationError("Already in watchlist.")
-        serializer.save(user=self.request.user, company=company)
+        try:
+            company = serializer.validated_data['company_id']
+            if WatchList.objects.filter(user=self.request.user, company=company).exclude(id=self.get_object().id).exists():
+                raise ValidationError("Already in watchlist.")
+            serializer.save(user=self.request.user, company=company)
+        except KeyError:
+            logger.warning("Missing required field: company_id")
+            raise ValidationError("Missing required field: company_id")
+        except Exception as e:
+            logger.error(f"Error updating watchlist: {e}")
+            raise ValidationError("Unable to update watchlist.")
+        
+
+# logger example to store headers and payloads 
+
+class SomeCriticalAPIView(APIView):
+    def post(self, request):
+        try:
+            critical_logger.info("Request Headers: %s", dict(request.headers))
+            critical_logger.info("Request Body: %s", request.data)
+
+            # your logic here...
+            return Response({"message": "success"})
+
+        except Exception as e:
+            logger.error("Critical API error: %s", str(e), exc_info=True)
+            raise ValidationError("Something went wrong")
+
+
+SENSITIVE_KEYS = {'password', 'token', 'secret'}
+
+def sanitize_data(data):
+    return {
+        key: '[REDACTED]' if key.lower() in SENSITIVE_KEYS else value
+        for key, value in data.items()
+    }
+class SomeCriticalAPIView2(APIView):
+    def post(self, request):
+        try:
+            # Sanitize headers before logging
+            headers = dict(request.headers)
+            if 'Authorization' in headers:
+                headers['Authorization'] = '[REDACTED]'
+
+            # Sanitize body before logging
+            body = request.data.copy()
+            if 'password' in body:
+                body['password'] = '[REDACTED]'
+
+            # body = sanitize_data(request.data.copy())
+
+            critical_logger.info("Request Headers: %s", headers)
+            critical_logger.info("Request Body: %s", body)
+
+            # your core logic
+            return Response({"message": "success"})
+
+        except Exception as e:
+            logger.error("Critical API error: %s", str(e), exc_info=True)
+            raise ValidationError("Something went wrong")
+        
+

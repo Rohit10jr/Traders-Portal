@@ -28,12 +28,21 @@ class CompanySerializer(serializers.ModelSerializer):
 class WatchlistSerializer(serializers.ModelSerializer):
     
     company = CompanySerializer(read_only=True)
-    company_id = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True) 
+    company_id = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True, error_messages={
+            'required': 'Please provide a company_id',
+            'does_not_exist': 'Company does not exist.'
+        }
+    )
+    # company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all())
     # user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = WatchList
-        # fields = ['id', 'company', 'user']
         fields = ['id', 'company', 'company_id', 'user']
         # extra_kwargs = {'id': {'read_only': True}}
+
+    # def validate(self, data):
+    #     if 'company_id' not in data:
+    #         raise serializers.ValidationError("company_id is required.")
+    #     return data
