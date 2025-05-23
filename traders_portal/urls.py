@@ -28,13 +28,15 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Watchlist API",
+        title="Fingrad Tradebrain API",
         default_version='v1',
-        description="API for Companies and Watchlists",
-        # contact=openapi.Contact(email="abdul.jaseem@tradebrains.in"),
+        description="API documentation for the Fingrad Tradebrain project, providing access to company data and watchlist management.",
+        terms_of_service="https://www.google.com/policies/terms/", # Replace with your actual terms
+        contact=openapi.Contact(email="support@tradebrain.com"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=(permissions.AllowAny,), # Or IsAdminUser, etc., depending on who should see the docs
 )
 
 

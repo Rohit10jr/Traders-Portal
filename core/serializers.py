@@ -24,6 +24,11 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = '__all__'
 
+    # def validate_company_name(self, value):
+    #     if not value.isalpha():
+    #         raise serializers.ValidationError("Company name should only contain letters.")
+    #     return value
+
 
 class WatchlistSerializer(serializers.ModelSerializer):
     
