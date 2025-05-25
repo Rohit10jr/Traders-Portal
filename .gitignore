@@ -67,3 +67,6 @@ htmlcov/                # HTML coverage reports
 
 # Jupyter Notebook files (if applicable)
 .ipynb_checkpoints/
+dump.rdb
+
+find
