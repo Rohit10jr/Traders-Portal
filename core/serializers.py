@@ -20,20 +20,52 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Company model.
+    Used for creating, retrieving, and updating company information.
+    """
+    company_name = serializers.CharField(
+        max_length=255,
+        help_text="The full legal name of the company. Example: `Tata Motors Ltd`"
+    )
+    symbol = serializers.CharField(
+        max_length=50,
+        help_text="The unique stock exchange ticker symbol for the company. Example: `TATAMOTORS`"
+    )
+    scripcode = serializers.CharField(
+        max_length=50,
+        help_text="A specific code used to identify the company on a particular exchange. Example: `500570`"
+    )
     class Meta:
         model = Company
         fields = '__all__'
 
+    # def validate_company_name(self, value):
+    #     if not value.isalpha():
+    #         raise serializers.ValidationError("Company name should only contain letters.")
+    #     return value
+
 
 class WatchlistSerializer(serializers.ModelSerializer):
-    
-    company = CompanySerializer(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(read_only=True) 
-    company_id = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True, error_messages={
-            'required': 'Please provide a company_id',
-            'does_not_exist': 'Company does not exist.'
-        }
+    """
+    Serializer for the WatchList model.
+    Handles adding companies to a user's watchlist and retrieving/managing watchlist entries.
+    """
+    company = CompanySerializer(read_only=True, help_text="Details of the company in the watchlist.")
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        help_text="The ID of the user who owns this watchlist entry (automatically set)."
     )
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(),
+        write_only=True,
+        error_messages={
+            'required': 'Please provide a company_id',
+            'does_not_exist': 'Company with the given ID does not exist.'
+        },
+        help_text="The ID of the company to add or modify in the watchlist."
+    )
+
     # company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all())
     # user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 

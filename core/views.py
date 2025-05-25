@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from .serializers import RegisterSerializer
-from rest_framework import status
+from rest_framework import generics, permissions, status, serializers
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -18,8 +18,14 @@ from django.db import IntegrityError
 from rest_framework import generics, permissions, status
 from django.shortcuts import get_object_or_404 # Helper for getting company
 
+from rest_framework.exceptions import ValidationError
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
 critical_logger = logging.getLogger('critical_api')
 logger = logging.getLogger(__name__)
+
 
 class RegisterView(APIView):
     def post(self, request):
@@ -52,12 +58,18 @@ class Home(APIView):
 # ----------- Company Views (CRUD for User) -----------
 
 class CompanyListCreateView(generics.ListCreateAPIView):
+    """
+    API endpoint that allows users to view a list of all companies or create new company entries.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
 
     def get_queryset(self):
+        """
+        Filters the queryset based on a search query 'q'.
+        """
         queryset = self.queryset
         q = self.request.query_params.get('q', '')
         if q:
@@ -70,14 +82,22 @@ class CompanyListCreateView(generics.ListCreateAPIView):
     
 
 class CompanyDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint that allows users to retrieve, update, or delete a specific company entry.
+    """
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticated]
+    
 
 
 # ----------- Watchlist Views (CRUD for User) -----------
 
 class WatchlistListCreateView(generics.ListCreateAPIView):
+    """
+    API endpoint that allows authenticated users to view their watchlist
+    or add new companies to their watchlist.
+    """
     queryset = WatchList.objects.all()
     serializer_class = WatchlistSerializer
     permission_classes = [IsAuthenticated]
@@ -105,6 +125,10 @@ class WatchlistListCreateView(generics.ListCreateAPIView):
 
 
 class WatchlistListDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint that allows authenticated users to retrieve, update, or delete
+    a specific watchlist entry.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = WatchlistSerializer
 

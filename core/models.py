@@ -1,10 +1,16 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.db import models
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Company(models.Model):
     company_name = models.CharField(max_length=255, db_index=True)
-    symbol = models.CharField(max_length=50, unique=True, db_index=True)
+    # symbol = models.CharField(max_length=50, unique=True, db_index=True)
+    symbol = models.CharField(max_length=50, db_index=True)
     scripcode = models.CharField(max_length=50)
 
     def __str__(self):
