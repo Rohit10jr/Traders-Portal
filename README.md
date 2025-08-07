@@ -84,6 +84,74 @@ This project was created for a Fingrad job task and is designed to demonstrate D
 
 ---
 
+## Developer Workflow & Troubleshooting
+
+Here are common commands for development, testing, coverage, and troubleshooting:
+
+### Testing & Coverage
+
+```sh
+# Run Django tests
+python311 manage.py test
+
+# Run tests with coverage tracking
+coverage run manage.py test
+
+# Generate coverage report in terminal
+coverage report
+
+# Generate HTML coverage report
+coverage html
+
+# Open coverage report (Windows only)
+start htmlcov/index.html
+```
+
+### Data Loading
+
+```sh
+# Load companies using Django shell and a script
+python311 manage.py shell < load_companies.py
+```
+
+### Server & Port Troubleshooting
+
+```sh
+# Find process using port 8000
+netstat -ano | findstr :8000
+
+# Kill process by PID (replace 3812 with your PID)
+taskkill /PID 3812 /F
+```
+
+### Celery & Redis
+
+```sh
+# Start Redis server (Windows)
+redis-server.exe
+
+# Start Celery worker
+celery -A traders_portal worker --loglevel=info --pool=solo
+
+# Start Celery beat scheduler
+celery -A traders_portal beat --loglevel=info
+```
+
+### Migration & Database Cleanup
+
+```sh
+# Remove migration Python files except __init__.py
+find core/migrations -path "*__init__.py" -prune -o -name "*.py" -exec rm -f {} \;
+
+# Remove compiled Python files in migrations
+find core/migrations -name "*.pyc" -delete
+
+# Remove database file
+rm db.sqlite3
+```
+
+---
+
 ## API Endpoints
 
 - **User Registration:** `/api/register/`
