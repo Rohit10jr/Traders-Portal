@@ -181,12 +181,5 @@ rm db.sqlite3
 
 ---
 
-## Links
-
-- [Swagger UI](http://localhost:8000/swagger/)
-- [ReDoc UI](http://localhost:8000/redoc/)
-- [GitHub Repository](https://github.com/Rohit10jr/Traders-Portal)
-
-
 <!-- ## Thank you -->
 
