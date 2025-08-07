@@ -88,6 +88,16 @@ This project was created for a Fingrad job task and is designed to demonstrate D
 
 Here are common commands for development, testing, coverage, and troubleshooting:
 
+### Server & Port Troubleshooting
+
+```sh
+# Find process using port 8000
+netstat -ano | findstr :8000
+
+# Kill process by PID (replace 3812 with your PID)
+taskkill /PID 3812 /F
+```
+
 ### Testing & Coverage
 
 ```sh
@@ -112,16 +122,6 @@ start htmlcov/index.html
 ```sh
 # Load companies using Django shell and a script
 python311 manage.py shell < load_companies.py
-```
-
-### Server & Port Troubleshooting
-
-```sh
-# Find process using port 8000
-netstat -ano | findstr :8000
-
-# Kill process by PID (replace 3812 with your PID)
-taskkill /PID 3812 /F
 ```
 
 ### Celery & Redis
@@ -181,59 +181,12 @@ rm db.sqlite3
 
 ---
 
-## License
-
-MIT License (see `swagger` API doc for details)
-
----
-
-<!--
 ## Links
 
 - [Swagger UI](http://localhost:8000/swagger/)
 - [ReDoc UI](http://localhost:8000/redoc/)
 - [GitHub Repository](https://github.com/Rohit10jr/Traders-Portal)
 
----
 
-## Contact
-
-For support or questions, email: support@tradebrain.com
- -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--  -->
-python311 manage.py test
-start htmlcov/index.html
-coverage html 
-coverage report
-coverage run manage.py test
-python311 manage.py shell < load_companies.py^C
-netstat -ano | findstr :8000
-taskkill /PID 3812 /F
-celery -A traders_portal worker --loglevel=info --pool=solo
-celery -A traders_portal beat --loglevel=info
-redis-server.exe
-find core/migrations -path "*__init__.py" -prune -o -name "*.py" -exec rm -f {} \;
-find core/migrations -name "*.pyc" -delete
-rm db.sqlite3
+<!-- ## Thank you -->
 
